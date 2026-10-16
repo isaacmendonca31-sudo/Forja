@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101211">
+  <meta name="description" content="Registre seus treinos, séries, cargas e evolução.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>FORJA — Treinos</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Forja início"><span class="brand-mark">F</span><span>FORJA<span class="brand-dot">.</span></span></a>
+      <button id="installBtn" class="icon-button install-button" hidden aria-label="Instalar aplicativo">⇩ <span>Instalar</span></button>
+      <div id="connectionStatus" class="status-pill"><span class="status-dot"></span> OFFLINE</div>
+    </header>
+
+    <main>
+      <section id="inicioView" class="view active">
+        <div class="eyebrow"><span id="todayLabel">SEU TREINO</span><span class="eyebrow-line"></span></div>
+        <h1>Construa sua<br><span class="accent-text">evolução.</span></h1>
+        <p class="muted intro">Um treino de cada vez. Registre, acompanhe e evolua.</p>
+
+        <div class="hero-card">
+          <div class="hero-top"><span class="tag">PLANO ATUAL</span><span class="hero-icon">↗</span></div>
+          <h2>Divisão semanal</h2>
+          <p class="muted">5 dias · Hipertrofia e recomposição</p>
+          <div class="week-progress"><div class="progress-track"><div id="weekProgressBar" class="progress-fill"></div></div><strong id="weekProgressText">0/5</strong></div>
+          <div class="week-days" id="weekDays"></div>
+        </div>
+
+        <div class="section-heading"><div><span class="eyebrow">SEU PLANO</span><h2>Treinos da semana</h2></div><span class="small-muted">A–E</span></div>
+        <div id="workoutCards" class="workout-list"></div>
+
+        <div class="section-heading history-heading"><div><span class="eyebrow">CONSISTÊNCIA</span><h2>Resumo recente</h2></div><button class="text-button" data-nav="historico">Ver histórico ↗</button></div>
+        <div class="stats-grid">
+          <div class="stat-card"><span class="stat-icon">▦</span><span class="stat-number" id="totalWorkouts">0</span><span class="stat-label">treinos salvos</span></div>
+          <div class="stat-card"><span class="stat-icon">↗</span><span class="stat-number" id="totalSets">0</span><span class="stat-label">séries concluídas</span></div>
+        </div>
+      </section>
+
+      <section id="treinoView" class="view">
+        <button class="back-button" data-nav="inicio">← Início</button>
+        <div class="eyebrow"><span id="sessionDayLabel">TREINO A</span><span class="eyebrow-line"></span></div>
+        <h1 id="sessionTitle">Peito e costas A</h1>
+        <p class="muted intro" id="sessionSubtitle">Registre cada série conforme avança.</p>
+        <div class="session-summary"><div><strong id="sessionExerciseCount">6</strong><span>exercícios</span></div><div><strong id="sessionSetCount">16</strong><span>séries planejadas</span></div><div><strong id="sessionDoneCount">0%</strong><span>concluído</span></div></div>
+        <div class="session-progress"><div class="progress-track"><div id="sessionProgressBar" class="progress-fill"></div></div></div>
+        <section class="rest-panel" aria-label="Temporizador de descanso">
+          <div><span class="rest-label">DESCANSO</span><strong id="restClock">01:30</strong><span id="restStatus" class="rest-status">Temporizador pronto</span></div>
+          <div class="rest-actions"><button type="button" class="secondary-button" id="restStartBtn">Iniciar 90 s</button><button type="button" class="text-button" id="restResetBtn">Zerar</button></div>
+        </section>
+        <div id="sessionExercises" class="exercise-list"></div>
+        <label class="field-label" for="sessionNotes">Notas do treino <span class="muted">(opcional)</span></label>
+        <textarea id="sessionNotes" class="notes-input" rows="3" placeholder="Como foi o treino? Energia, observações... "></textarea>
+        <div class="session-actions"><button id="saveWorkoutBtn" class="primary-button">Salvar treino <span>✓</span></button><button id="cancelWorkoutBtn" class="secondary-button">Voltar sem salvar</button></div>
+        <p class="tiny-note">Seus registros ficam salvos neste dispositivo. Evite apagar os dados do navegador sem exportar um backup.</p>
+      </section>
+
+      <section id="baseView" class="view">
+        <div class="eyebrow"><span>CATÁLOGO</span><span class="eyebrow-line"></span></div>
+        <h1>Base de exercícios<span class="accent-text">.</span></h1>
+        <p class="muted intro">Encontre alternativas, acompanhe suas metas e varie o treino com critério.</p>
+        <div class="library-tools">
+          <input id="exerciseSearch" class="library-search" type="search" placeholder="Buscar exercício..." aria-label="Buscar exercício">
+          <select id="muscleFilter" class="library-select" aria-label="Filtrar por grupo muscular"><option value="todos">Todos os grupos</option><option value="Peito">Peito</option><option value="Costas">Costas</option><option value="Ombros">Ombros</option><option value="Bíceps">Bíceps</option><option value="Tríceps">Tríceps</option><option value="Pernas">Pernas</option><option value="Panturrilhas">Panturrilhas</option></select>
+          <select id="equipmentFilter" class="library-select" aria-label="Filtrar por equipamento"><option value="todos">Todos os equipamentos</option><option value="máquina">Máquina</option><option value="polia">Polia</option><option value="barra">Barra</option><option value="halteres">Halteres</option><option value="banco scott">Banco Scott</option><option value="peso corporal">Peso corporal</option></select>
+          <select id="typeFilter" class="library-select" aria-label="Filtrar por tipo de exercício"><option value="todos">Todos os tipos</option><option value="Composto">Composto</option><option value="Isolador">Isolador</option></select>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">COM BASE NO SEU HISTÓRICO</span><h2>Sugestões de evolução</h2></div></div>
+        <div id="recommendations" class="recommendation-list"></div>
+        <div class="section-heading library-heading"><div><span class="eyebrow">EXERCÍCIOS CADASTRADOS</span><h2>Biblioteca</h2></div><span id="libraryCount" class="small-muted">0 exercícios</span></div>
+        <div id="exerciseLibrary" class="library-list"></div>
+        <p class="tiny-note">As sugestões são orientações gerais baseadas nos registros. Elas não substituem avaliação profissional. Não troque exercícios só por calendário: priorize progressão gradual, execução consistente e recuperação adequada.</p>
+      </section>
+
+      <section id="historicoView" class="view">
+        <div class="eyebrow"><span>SEU CAMINHO</span><span class="eyebrow-line"></span></div>
+        <h1>Histórico<span class="accent-text">.</span></h1>
+        <p class="muted intro">Seus treinos concluídos, guardados em um só lugar.</p>
+        <div class="stats-grid history-stats"><div class="stat-card"><span class="stat-icon">▦</span><span class="stat-number" id="historyWorkoutCount">0</span><span class="stat-label">treinos registrados</span></div><div class="stat-card"><span class="stat-icon">✓</span><span class="stat-number" id="historySetCount">0</span><span class="stat-label">séries concluídas</span></div></div>
+        <div class="section-heading progress-heading"><div><span class="eyebrow">DESEMPENHO</span><h2>Evolução por exercício</h2></div></div>
+        <div class="progress-card"><label class="field-label" for="progressExerciseFilter">Exercício</label><select id="progressExerciseFilter" class="library-select"><option value="">Registre treinos para ver a evolução</option></select><div id="progressSummary" class="progress-summary">O volume considera apenas séries concluídas com carga e repetições registradas.</div><div id="progressChart" class="progress-chart"></div></div>
+        <div class="section-heading"><div><span class="eyebrow">REGISTROS</span><h2>Treinos anteriores</h2></div><button id="exportBtn" class="text-button">Exportar dados ↓</button></div>
+        <div id="historyList" class="history-list"></div>
+        <div class="data-tools"><div><strong>Seus dados, seu controle.</strong><p class="muted">Exporte um arquivo JSON para guardar uma cópia dos seus registros.</p></div><label class="secondary-button import-button">Importar backup<input id="importInput" type="file" accept="application/json,.json" hidden></label></div>
+      </section>
+
+      <section id="ajustesView" class="view">
+        <div class="eyebrow"><span>CONFIGURAÇÕES</span><span class="eyebrow-line"></span></div>
+        <h1>Ajustes<span class="accent-text">.</span></h1>
+        <p class="muted intro">Gerencie o plano e os dados do aplicativo.</p>
+        <section class="account-panel" aria-labelledby="accountTitle">
+          <div class="account-panel-heading"><div><span class="eyebrow">CONTA E SINCRONIZAÇÃO</span><h2 id="accountTitle">Sua conta FORJA</h2></div><span id="accountBadge" class="account-badge">LOCAL</span></div>
+          <p id="accountMessage" class="muted account-message">Crie uma conta para sincronizar seus treinos entre dispositivos. O modo offline continua disponível.</p>
+          <form id="accountForm" class="account-form">
+            <label class="field-label" for="accountEmail">E-mail</label>
+            <input id="accountEmail" class="account-input" type="email" autocomplete="email" placeholder="voce@exemplo.com" required>
+            <label class="field-label" for="accountPassword">Senha</label>
+            <input id="accountPassword" class="account-input" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo de 8 caracteres" required>
+            <div class="account-actions"><button id="signInBtn" class="primary-button" type="button">Entrar</button><button id="signUpBtn" class="secondary-button" type="button">Criar conta</button></div>
+            <button id="resetPasswordBtn" class="text-button account-reset" type="button">Esqueci minha senha</button>
+          </form>
+          <div id="passwordUpdatePanel" class="password-update-panel" hidden>
+            <label class="field-label" for="newAccountPassword">Nova senha</label>
+            <input id="newAccountPassword" class="account-input" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres">
+            <button id="saveNewPasswordBtn" class="primary-button full-button" type="button">Salvar nova senha</button>
+          </div>
+          <div id="signedInPanel" class="signed-in-panel" hidden>
+            <div class="account-user"><span class="account-avatar">F</span><div><strong id="signedInEmail"></strong><span id="syncDetail" class="muted">Sincronização aguardando conexão</span></div></div>
+            <div class="account-actions"><button id="syncNowBtn" class="secondary-button" type="button">Sincronizar agora</button><button id="signOutBtn" class="danger-button" type="button">Sair da conta</button></div>
+          </div>
+          <p class="tiny-note">A sincronização usa conexão segura. Seus dados na nuvem são privados por conta. Nunca compartilhe chaves administrativas ou a chave service_role.</p>
+        </section>
+        <div class="settings-card"><div class="settings-icon">▤</div><div><h3>Ficha inicial</h3><p class="muted">Divisão de cinco dias carregada com os exercícios planejados.</p></div><span class="settings-check">✓</span></div>
+        <div class="settings-card"><div class="settings-icon">▣</div><div><h3>Armazenamento local e nuvem</h3><p class="muted">Os treinos são salvos neste dispositivo e sincronizados com sua conta quando houver conexão e configuração do serviço.</p></div></div>
+        <div class="settings-card"><div class="settings-icon">↗</div><div><h3>Progressão de treino</h3><p class="muted">Ajuste cargas e repetições gradualmente, mantendo a qualidade da execução e a recuperação entre sessões.</p></div></div>
+        <button id="settingsExportBtn" class="secondary-button full-button">Exportar backup dos dados</button>
+        <button id="resetBtn" class="danger-button full-button">Apagar todos os registros</button>
+        <p class="tiny-note">Versão 0.5.0 · FORJA</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" data-nav="inicio"><span class="nav-icon">⌂</span><span>Início</span></button>
+      <button class="nav-item" data-nav="treino"><span class="nav-icon">＋</span><span>Treinar</span></button>
+      <button class="nav-item" data-nav="base"><span class="nav-icon">▦</span><span>Base</span></button>
+      <button class="nav-item" data-nav="historico"><span class="nav-icon">▤</span><span>Histórico</span></button>
+      <button class="nav-item" data-nav="ajustes"><span class="nav-icon">⚙</span><span>Ajustes</span></button>
+    </nav>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="supabase-config.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
